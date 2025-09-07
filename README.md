@@ -8,9 +8,13 @@ Gồm 3 phần:
 - Orchestration (tùy chọn): [docker-compose.yml](docker-compose.yml)
 
 ## Cách 1: Chạy nhanh bằng Docker Compose
+
+## Yêu cầu 
+- Docker
+
 1. Ở thư mục gốc, chạy:
-   - Linux/macOS: `docker compose up`
-   - Windows: `docker-compose up`
+   - Linux/macOS: `docker compose up --build`
+   - Windows: `docker-compose up --build`
 3. Dừng dịch vụ: `docker compose down -v`
 
 ## Cách 2: Chạy thủ công (local dev)
@@ -18,10 +22,17 @@ Gồm 3 phần:
 ## Yêu cầu 
 - Java 21, Maven
 - Node.js 18+ và npm 9+
-- Docker & Docker Compose (nếu chạy bằng container)
+- MySQL
 
-### 1) Backend: jewelry (Spring Boot)
+### 1) Cơ sở dữ liệu
+- Nhập dữ liệu mẫu (MySQL):
+  - Mở cmd
+  - Nhập: `mysql -u <user> -p <dbname> < jewelrywebappdb.sql`
+- Đảm bảo backend kết nối đúng DB qua biến môi trường hoặc .[application.properties](jewelry/src/main/resources/application.properties)
+
+### 2) Backend: jewelry (Spring Boot)
 - Chạy trực tiếp:
+- Mở cmd và Nhập:
   - Linux/macOS:
     - `cd jewelry`
     - `./mvnw spring-boot:run`
@@ -31,23 +42,16 @@ Gồm 3 phần:
 - Build JAR và chạy:
   - `./mvnw clean package -DskipTests`
   - `java -jar target/*.jar`
-- Mặc định chạy trên cổng 8080.
 - Cấu hình DB (ví dụ biến môi trường Spring): `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD`
 
-### 2) Admin: shiny-management (React + Vite + TypeScript)
-- Cài và chạy:
+### 3) Admin: shiny-management (React + Vite + TypeScript)
+- Mở cmd và Nhập:
   - `cd shiny-management`
   - `npm install`
   - `npm start`
 - Mặc định Vite chạy cổng 5173
-### 3) Website UI: shiny-website-ui (React + Vite)
-- Cài và chạy:
+### 4) Website UI: shiny-website-ui (React + Vite)
+- Mở cmd và Nhập:
   - `cd shiny-website-ui`
   - `npm install`
   - `npm run dev`
-
-## Cơ sở dữ liệu
-- Nhập dữ liệu mẫu (MySQL):
-  - Mở cmd
-  - Nhập: `mysql -u <user> -p <dbname> < jewelrywebappdb.sql`
-- Đảm bảo backend kết nối đúng DB qua biến môi trường hoặc application properties.
