@@ -76,7 +76,7 @@ npm install
 npm start
 ```
 
-> 💡 Mặc định chạy trên cổng **5173**
+> 💡 Mặc định chạy trên cổng **5174**
 
 ### 4️⃣ User Website: shiny-website-ui (React + Vite)
 
@@ -85,3 +85,5 @@ cd shiny-website-ui
 npm install
 npm run dev
 ```
+
+> 💡 Mặc định chạy trên cổng **5173**
