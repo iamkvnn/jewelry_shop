@@ -1,0 +1,92 @@
+.filter__box h4 {
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--text-color);
+    margin-bottom: 15px;
+    padding-top: 15px;
+    border-top: 2px solid var(--gray-color);
+}
+
+.filter__box ul {
+    list-style: none;
+    padding-left: 5px;
+}
+.filter__box li {
+    margin-top: 20px; 
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+}
+.li{
+    font-weight: bold;
+}
+.filter__box input[type="checkbox"] {
+    margin-right: 20px; 
+    margin-left: 8px;
+    cursor: pointer;
+    transform: scale(1);
+    width: 18px;
+    height: 18px;
+    
+}
+.filterSize{
+    display: flex;
+    flex-wrap: wrap;
+}
+.filterSizeNumber{
+    background-color: white;
+    font-weight: bold;
+    width: 80px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    cursor: pointer; 
+    margin: 6px 8px;
+    border: 2px solid var(--gray-color);
+}
+
+
+.filterItem{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    border-radius: 8px;
+    padding: 0px 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.05s ease;
+    cursor: pointer;
+}
+
+
+.productMaterial{
+    width: 30px;  
+    height: 30px;
+    border-radius: 50%;
+    font-weight: bold;
+}
+.pricename{
+    font-weight: bold;
+}
+.productMaterialname{
+    font-weight: bold;
+}
+.filterSizeNumber.selected {
+    font-weight: bold;
+    background-color: var(--gray-color);
+}
+.filterItem:active {
+    background-color: var(--gray-color);
+    transform: scale(0.97);
+    transition: transform 0.05s ease, background-color 0.1s ease;
+    border-radius: 8px;
+  }
+  .filterSizeNumber:hover {
+    background-color: var(--background-catagory-color);
+    transform: scale(1.02);
+    transition: transform 0.1s ease, background-color 0.2s ease;
+  }
+  
+  .filterItem:hover {
+    transform: scale(1.01);
+    transition: transform 0.1s ease, background-color 0.2s ease;
+  }

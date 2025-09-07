@@ -1,0 +1,68 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: jewelrywebapp
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./jewelrywebappdb.sql:/docker-entrypoint-initdb.d/jewelrywebappdb.sql
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./jewelry
+      dockerfile: Dockerfile
+    container_name: jewelry-backend
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/jewelrywebapp
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    networks:
+      - app-network
+
+  fe-management:
+    build:
+      context: ./shiny-management
+      dockerfile: Dockerfile
+    container_name: jewelry-management
+    depends_on:
+      - backend
+    ports:
+      - "5174:80"
+    networks:
+      - app-network
+
+  fe-user:
+    build:
+      context: ./shiny-website-ui
+      dockerfile: Dockerfile
+    container_name: jewelry-user
+    depends_on:
+      - backend
+    ports:
+      - "5173:80"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
