@@ -17,17 +17,12 @@ Dự án bao gồm các thành phần sau:
 
 ### Các bước thực hiện
 
-1. **Khởi động MySQL:**
+1. **Khởi động tất cả service:**
     ```bash
-    docker compose up -d mysql
+    docker compose up -d
     ```
 
-2. **Đợi MySQL khởi động hoàn tất, sau đó chạy các service còn lại:**
-    ```bash
-    docker compose up -d backend fe-management fe-user
-    ```
-
-3. **Dừng tất cả service:**
+2. **Dừng tất cả service:**
     ```bash
     docker compose down -v
     ```
