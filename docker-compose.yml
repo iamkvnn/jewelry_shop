@@ -14,12 +14,13 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost --silent"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot", "--silent"]
       interval: 10s
-      timeout: 5s
-      retries: 5
+      timeout: 10s
+      retries: 10
+      start_period: 30s
 
-  backend:
+  backend:  
     build:
       context: ./jewelry
       dockerfile: Dockerfile
