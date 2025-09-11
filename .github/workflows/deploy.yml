@@ -1,39 +1,39 @@
-name: Deploy to EC2
+  name: Deploy to EC2
 
-on:
-  push:
-    branches: [ main ]
-  workflow_dispatch: {}
+  on:
+    push:
+      branches: [ main ]
+    workflow_dispatch: {}
 
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Set up SSH
-      uses: webfactory/ssh-agent@v0.5.0
-      with:
-        ssh-private-key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
+  jobs:
+    build-and-deploy:
+      runs-on: ubuntu-latest
+      steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
         
-    - name: Deploy with Docker Compose
-      run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST_IP }} << 'EOF'
-          cd ~/app
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.0
+        with:
+          ssh-private-key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
           
-          # Pull any external images defined in docker-compose.yml
-          docker compose pull || true
-          
-          # Stop existing containers
-          docker compose down
-          
-          # Remove old images to free up space (optional)
-          docker image prune -f
-          
-          # Build and start containers
-          docker compose up -d --build
-          
-          # Show running containers
-          docker compose ps
-        EOF
+      - name: Deploy with Docker Compose
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST_IP }} << 'EOF'
+            cd /home/app/jewelry_shop
+            
+            # Pull any external images defined in docker-compose.yml
+            docker compose pull || true
+            
+            # Stop existing containers
+            docker compose down
+            
+            # Remove old images to free up space (optional)
+            docker image prune -f
+            
+            # Build and start containers
+            docker compose up -d --build
+            
+            # Show running containers
+            docker compose ps
+          EOF
