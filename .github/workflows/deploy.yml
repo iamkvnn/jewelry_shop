@@ -18,13 +18,13 @@ jobs:
         ssh-private-key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
         
     - name: Deploy with Docker Compose
-      run: |
-        # Copy files to the server
-        scp -o StrictHostKeyChecking=no -r ./* ${{ secrets.USERNAME }}@${{ secrets.HOST_IP }}:/home/app/jewelry_shop/
-        
+      run: |        
         # Deploy only backend and frontend services
         ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST_IP }} << 'EOF'
+
           cd /home/app/jewelry_shop
+          # Pull latest code from GitHub
+          git pull origin main
           
           # Stop and rebuild only backend and frontend services
           docker compose stop backend fe-management fe-user
