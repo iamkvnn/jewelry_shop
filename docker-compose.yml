@@ -1,5 +1,5 @@
 services:
-  mysql:
+  mysql-db:
     image: mysql:8.0
     container_name: mysql-db
     restart: always
@@ -7,7 +7,7 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: jewelrywebapp
     ports:
-      - "3306:3306"
+      - "3300:3306"
     volumes:
       - mysql_data:/var/lib/mysql
       - ./jewelrywebappdb.sql:/docker-entrypoint-initdb.d/jewelrywebappdb.sql
@@ -26,12 +26,12 @@ services:
       dockerfile: Dockerfile
     container_name: jewelry-backend
     depends_on:
-      mysql:
+      mysql-db:
         condition: service_healthy
     ports:
       - "8080:8080"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/jewelrywebapp
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/jewelrywebapp
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
     networks:
