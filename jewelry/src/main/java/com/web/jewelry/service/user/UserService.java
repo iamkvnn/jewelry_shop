@@ -20,6 +20,7 @@ import com.web.jewelry.repository.StaffRepository;
 import com.web.jewelry.service.email.EmailQueueService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
