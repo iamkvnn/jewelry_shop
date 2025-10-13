@@ -1,0 +1,93 @@
+.comparePage {
+  padding: 24px;
+}
+
+.emptyState {
+  padding: 48px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.emptyIcon {
+  font-size: 48px;
+  color: #ccc;
+}
+
+.emptyTitle {
+  color: #666;
+  margin: 0;
+}
+
+.emptyDescription {
+  color: #888;
+  margin: 0;
+  max-width: 400px;
+}
+
+.emptyButton {
+  padding: 12px 32px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.title {
+  margin: 0;
+}
+
+.tableContainer {
+  overflow-x: auto;
+}
+
+.compareTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tableHeader {
+  text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.productHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.productImage {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.productInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.productTitle {
+  font-weight: 600;
+}
+
+.tableCell {
+  padding: 12px;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.labelCell {
+  padding: 12px;
+  border-bottom: 1px solid #f5f5f5;
+  font-weight: 600;
+}
