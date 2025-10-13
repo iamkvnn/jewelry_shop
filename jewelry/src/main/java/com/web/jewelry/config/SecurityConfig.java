@@ -51,19 +51,20 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.headers(headers -> {
-            headers.contentSecurityPolicy(csp -> csp
-                .policyDirectives(
-                        "default-src 'self'; " +
-                        "script-src 'self'; " +
-                        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-                        "img-src 'self' data: https://cdn.pnj.io; " +
-                        "font-src 'self' https://fonts.gstatic.com; " +
-                        "connect-src 'self'; " +
-                        "frame-ancestors 'none';"
-                )
-            );
-        });
-        httpSecurity.httpBasic(AbstractHttpConfigurer::disable);
+            headers
+                .frameOptions(frameOptions -> frameOptions.deny())
+                .contentSecurityPolicy(csp -> csp
+                    .policyDirectives(
+                            "default-src 'self'; " +
+                            "script-src 'self'; " +
+                            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+                            "img-src 'self' data: https://cdn.pnj.io; " +
+                            "font-src 'self' https://fonts.gstatic.com; " +
+                            "connect-src 'self'; " +
+                            "frame-ancestors 'none';"
+                    )
+                );
+            });
         httpSecurity.authorizeHttpRequests(request -> request.requestMatchers(PRIVATE_ENDPOINTS).authenticated()
                 .anyRequest().permitAll());
         httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer
