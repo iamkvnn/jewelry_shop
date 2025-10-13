@@ -20,6 +20,7 @@ import com.web.jewelry.repository.StaffRepository;
 import com.web.jewelry.service.email.EmailQueueService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
@@ -43,6 +44,8 @@ public class UserService implements IUserService {
     private final ManagerRepository managerRepository;
     private final EmailQueueService emailQueueService;
     private final PasswordEncoder passwordEncoder;
+    @Value("${FE_BASE_URL}")
+    private String frontendUrl;
 
     private final Map<String, String> verificationCodes = new HashMap<>();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(10);
@@ -94,7 +97,7 @@ public class UserService implements IUserService {
                 case CUSTOMER -> customerRepository.save((Customer) user);
             }
             emailQueueService.enqueue(new EmailRequest(user.getEmail(), "Xác nhận thay đổi mật khẩu", "Mật khẩu của bạn đã được thay đổi thành công.\n" +
-                    "Nếu bạn không thực hiện thay đổi này, vui lòng nhấp vào liên kết sau để khôi phục mật khẩu của bạn: https://shinyjewelry.shop/recover-password?token=" + token));
+                    "Nếu bạn không thực hiện thay đổi này, vui lòng nhấp vào liên kết sau để khôi phục mật khẩu của bạn: " + frontendUrl + "/recover-password?token=" + token));
         } else {
             throw new BadRequestException("Old password is incorrect");
         }
@@ -338,7 +341,7 @@ public class UserService implements IUserService {
             user.setDeleteAccountToken(token);
             user.setDeleteAccountTokenExpiration(LocalDateTime.now().plusMinutes(5));
             emailQueueService.enqueue(new EmailRequest(user.getEmail(), "Xác nhận xóa tài khoản", "Tài khoản của bạn đã được gửi yêu cầu xóa\n" +
-                "Nếu bạn không thực hiện thay đổi này vui lòng bỏ qua email này. Nếu thực sự muốn xoóa, vui lòng nhấp vào liên kết sau trong vòng 5 phút để xóa tài khoản của bạn: https://shinyjewelry.shop/confirm-delete?token=" + token));
+                "Nếu bạn không thực hiện thay đổi này vui lòng bỏ qua email này. Nếu thực sự muốn xoóa, vui lòng nhấp vào liên kết sau trong vòng 5 phút để xóa tài khoản của bạn: " + frontendUrl + "/confirm-delete?token=" + token));
             customerRepository.save(user);
         } else {
             throw new BadRequestException("Invalid user role");
