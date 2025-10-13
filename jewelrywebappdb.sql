@@ -1162,12 +1162,12 @@ CREATE TABLE `banner_image`  (
 -- ----------------------------
 -- Records of banner_image
 -- ----------------------------
-INSERT INTO `banner_image` (`created_at`, `id`, `updated_at`, `name`, `position`, `url`) VALUES ('2025-10-06 01:29:23.000000', 1, NULL, 'infocus', 'infocus', '/api/v1/banners/banner/info-9327baf1-b41c-45de-8650-b4c55d5290e5.png');
-INSERT INTO `banner_image` (`created_at`, `id`, `updated_at`, `name`, `position`, `url`) VALUES ('2025-10-06 01:38:18.000000', 2, NULL, 'product', 'product', '/api/v1/banners/banner/banner-69f1da57-8649-4cb6-ae73-fb2f408c3c52.jpg');
-INSERT INTO `banner_image` (`created_at`, `id`, `updated_at`, `name`, `position`, `url`) VALUES ('2025-10-06 01:38:22.000000', 3, NULL, 'home1', 'home', '/api/v1/banners/banner/imga-33a0b176-a98e-420f-ac85-2fa260e27574.png');
-INSERT INTO `banner_image` (`created_at`, `id`, `updated_at`, `name`, `position`, `url`) VALUES ('2025-10-06 01:38:34.000000', 4, NULL, 'home2', 'home', '/api/v1/banners/banner/imgb-dece4ea0-09ef-4af4-a0a6-6f35d0e7b9a8.png');
-INSERT INTO `banner_image` (`created_at`, `id`, `updated_at`, `name`, `position`, `url`) VALUES ('2025-10-06 01:38:53.000000', 5, NULL, 'home3', 'home', '/api/v1/banners/banner/imgc-f6c43507-2224-4fa9-a035-c76b4fdc3f1e.png');
-INSERT INTO `banner_image` (`created_at`, `id`, `updated_at`, `name`, `position`, `url`) VALUES ('2025-10-06 01:39:13.000000', 6, NULL, 'home4', 'home', '/api/v1/banners/banner/imgd-0137969e-aacb-4e30-8ec0-4e97c9c5d8b0.png');
+INSERT INTO `banner_image` (`created_at`, `id`, `updated_at`, `name`, `position`, `url`) VALUES ('2025-10-06 01:29:23.000000', 1, NULL, 'infocus', 'infocus', '/banners/banner/info-9327baf1-b41c-45de-8650-b4c55d5290e5.png');
+INSERT INTO `banner_image` (`created_at`, `id`, `updated_at`, `name`, `position`, `url`) VALUES ('2025-10-06 01:38:18.000000', 2, NULL, 'product', 'product', '/banners/banner/banner-69f1da57-8649-4cb6-ae73-fb2f408c3c52.jpg');
+INSERT INTO `banner_image` (`created_at`, `id`, `updated_at`, `name`, `position`, `url`) VALUES ('2025-10-06 01:38:22.000000', 3, NULL, 'home1', 'home', '/banners/banner/imga-33a0b176-a98e-420f-ac85-2fa260e27574.png');
+INSERT INTO `banner_image` (`created_at`, `id`, `updated_at`, `name`, `position`, `url`) VALUES ('2025-10-06 01:38:34.000000', 4, NULL, 'home2', 'home', '/banners/banner/imgb-dece4ea0-09ef-4af4-a0a6-6f35d0e7b9a8.png');
+INSERT INTO `banner_image` (`created_at`, `id`, `updated_at`, `name`, `position`, `url`) VALUES ('2025-10-06 01:38:53.000000', 5, NULL, 'home3', 'home', '/banners/banner/imgc-f6c43507-2224-4fa9-a035-c76b4fdc3f1e.png');
+INSERT INTO `banner_image` (`created_at`, `id`, `updated_at`, `name`, `position`, `url`) VALUES ('2025-10-06 01:39:13.000000', 6, NULL, 'home4', 'home', '/banners/banner/imgd-0137969e-aacb-4e30-8ec0-4e97c9c5d8b0.png');
 
 -- ----------------------------
 -- Table structure for cart
