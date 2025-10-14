@@ -64,7 +64,7 @@ const appsNavigationConfig: NavigationTree[] = [
                 translateKey: 'nav.appsSales.orders',
                 icon: 'crypto',
                 type: NAV_ITEM_TYPE_ITEM,
-                authority: [STAFF],
+                authority: [ STAFF],
                 subMenu: [],
             },
             {
@@ -84,7 +84,7 @@ const appsNavigationConfig: NavigationTree[] = [
                 translateKey: 'nav.sales.reviews',
                 icon: 'documentation',
                 type: NAV_ITEM_TYPE_ITEM,
-                authority: [STAFF],
+                authority: [ STAFF],
                 subMenu: [],
             },
             {
@@ -105,16 +105,6 @@ const appsNavigationConfig: NavigationTree[] = [
                 icon: 'common',
                 type: NAV_ITEM_TYPE_ITEM,
                 authority: [MANAGER],
-                subMenu: [],
-            },
-            {
-                key: 'appsSupport.chatSupport',
-                path: `${APP_PREFIX_PATH}/chat-support`,
-                title: 'Chat Support',
-                translateKey: 'nav.appsSupport.chatSupport',
-                icon: 'support',
-                type: NAV_ITEM_TYPE_ITEM,
-                authority: [MANAGER, STAFF],
                 subMenu: [],
             },
             {
