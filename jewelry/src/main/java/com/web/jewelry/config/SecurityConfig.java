@@ -82,14 +82,16 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of(feBaseUrlCus, feBaseUrlAdmin));
+        config.setAllowedOriginPatterns(List.of(feBaseUrlCus, feBaseUrlAdmin)); // <-- dùng cái này
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
 
+        // nếu FE gọi API /api/v1/** thì map này là đủ
         source.registerCorsConfiguration("/**", config);
         return source;
     }
+
 
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter(){

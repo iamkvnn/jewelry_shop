@@ -136,7 +136,17 @@ const appsRoute: Routes = [
         path: `${APP_PREFIX_PATH}/web-content`,
         component: lazy(() => import('@/views/sales/WebContent')),
         authority: [MANAGER],
-    }, 
+    },
+    {
+        key: 'appsSupport.chatSupport',
+        path: `${APP_PREFIX_PATH}/chat-support`,
+        component: lazy(() => import('@/views/support/ChatSupport/ChatSupport')),
+        authority: [MANAGER, STAFF],
+        meta: {
+            header: 'Chat Support',
+            headerContainer: true,
+        },
+    },
     {
         key: 'appsAccount.settings',
         path: `${APP_PREFIX_PATH}/account/settings/:tab`,
