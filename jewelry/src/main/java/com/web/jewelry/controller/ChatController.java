@@ -99,16 +99,6 @@ public class ChatController {
      */
     @MessageMapping("/chat.sendMessage")
     public void handleMessage(MessageRequest request) {
-        System.out.println("╔══════════════════════════════════════╗");
-        System.out.println("║  📨 MESSAGE RECEIVED ON BACKEND      ║");
-        System.out.println("╚══════════════════════════════════════╝");
-        System.out.println("📋 Request Details:");
-        System.out.println("   - ConversationId: " + request.getConversationId());
-        System.out.println("   - SenderId (raw): " + request.getSenderId());
-        System.out.println("   - SenderId type: " + (request.getSenderId() != null ? request.getSenderId().getClass().getName() : "null"));
-        System.out.println("   - SenderRole: " + request.getSenderRole());
-        System.out.println("   - Content: " + request.getContent());
-
         try {
             // Tạo message entity
             Message message = new Message();
@@ -118,16 +108,13 @@ public class ChatController {
 
             // Resolve senderId
             Long actualSenderId = resolveSenderId(request);
-            System.out.println("   - ✅ Resolved SenderId: " + actualSenderId);
             message.setSenderId(actualSenderId);
 
             // Lưu message vào DB
             Message saved = messageService.saveMessage(message);
-            System.out.println("   - ✅ Message saved to DB with ID: " + saved.getId());
 
             // Convert to response
             MessageResponse messageResponse = toMessageResponse(saved);
-            System.out.println("   - ✅ MessageResponse created: " + messageResponse);
 
             // Wrap trong WebSocketResponse
             WebSocketResponse wsResponse = WebSocketResponse.builder()
@@ -137,22 +124,16 @@ public class ChatController {
                     .senderRole(request.getSenderRole().toString())
                     .build();
 
-            System.out.println("   - ✅ WebSocketResponse built:");
-            System.out.println("      type: " + wsResponse.getType());
-            System.out.println("      conversationId: " + wsResponse.getConversationId());
-            System.out.println("      data: " + wsResponse.getData());
 
             // Broadcast message
             String destination = "/topic/conversation/" + request.getConversationId();
-            System.out.println("   - 📤 Broadcasting to: " + destination);
+
 
             messagingTemplate.convertAndSend(destination, wsResponse);
 
-            System.out.println("   - ✅ Message broadcasted successfully!");
-            System.out.println("══════════════════════════════════════\n");
 
         } catch (Exception e) {
-            System.err.println("❌ ERROR in handleMessage:");
+
             e.printStackTrace();
             throw e;
         }
@@ -163,37 +144,25 @@ public class ChatController {
      */
     private Long resolveSenderId(MessageRequest request) {
         Object senderId = request.getSenderId();
-
-        System.out.println("🔍 Resolving senderId...");
-        System.out.println("   - Input type: " + senderId.getClass().getName());
-        System.out.println("   - Input value: " + senderId);
-
         // Nếu đã là Long
         if (senderId instanceof Long) {
-            System.out.println("   - ✅ Already Long");
             return (Long) senderId;
         }
         // Nếu là Integer
         else if (senderId instanceof Integer) {
-            System.out.println("   - ✅ Converting from Integer to Long");
             return ((Integer) senderId).longValue();
         }
         // Nếu là String
         else if (senderId instanceof String) {
             String str = (String) senderId;
-            System.out.println("   - Input is String: " + str);
-
             // Thử parse thành Long trước (nếu là số dạng string)
             try {
                 Long id = Long.parseLong(str);
-                System.out.println("   - ✅ Parsed string to Long: " + id);
                 return id;
             } catch (NumberFormatException e) {
                 // Nếu không phải số -> đây là email
-                System.out.println("   - String is email, looking up staff...");
                 Staff staff = staffRepository.findByEmail(str)
                         .orElseThrow(() -> new RuntimeException("Staff not found with email: " + str));
-                System.out.println("   - ✅ Found staff with ID: " + staff.getId());
                 return staff.getId();
             }
         }

@@ -29,18 +29,15 @@ function WindowChat({ isOpen, onClose }) {
   // Tạo conversation khi mở chat
   useEffect(() => {
     if (isOpen && isConnecting && userId && connectionStatus === "requesting") {
-      console.log("Creating conversation for user:", userId);
       setError(null);
 
       chatApi
         .createConversation(userId)
         .then((response) => {
-          console.log("Conversation created:", response);
           setConnectionStatus("waiting");
           setConversationId(response.id);
         })
         .catch((error) => {
-          console.error("Error creating conversation:", error);
           setError("Không thể kết nối. Vui lòng thử lại sau.");
           setConnectionStatus("error");
           setIsConnecting(false);
@@ -48,13 +45,10 @@ function WindowChat({ isOpen, onClose }) {
     }
   }, [isOpen, isConnecting, userId, connectionStatus]);
 
-  // ✅ Kết nối WebSocket và xử lý messages
   useEffect(() => {
     if (conversationId) {
       connectWebSocket(conversationId, (message) => {
-        console.log("📩 Message received:", message);
 
-        // ✅ Xử lý WebSocketResponse structure mới
         switch (message.type) {
           case "STATUS":
             if (message.status === "ACCEPTED") {
@@ -81,7 +75,6 @@ function WindowChat({ isOpen, onClose }) {
             if (messageData) {
               // ⚠️ Bỏ qua nếu sender là chính user hiện tại (tránh bị render 2 lần)
               if (messageData.senderRole === "CUSTOMER" && messageData.senderId === userId) {
-                console.log("⏭️ Skipping own message");
                 return;
               }
 
@@ -98,7 +91,6 @@ function WindowChat({ isOpen, onClose }) {
             break;
 
           default:
-            console.warn("⚠️ Unknown message type:", message);
         }
       });
     }
@@ -147,7 +139,6 @@ function WindowChat({ isOpen, onClose }) {
         // ✅ Gửi với userId (Long) - backend sẽ xử lý đúng
         await sendMessage(conversationId, userId, messageText);
       } catch (error) {
-        console.error("Error sending message:", error);
         // Có thể thêm logic retry hoặc hiển thị error cho user
       }
     }

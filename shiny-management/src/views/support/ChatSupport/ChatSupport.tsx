@@ -20,7 +20,6 @@ const ChatSupport = () => {
     const staffEmail = user?.email
     const staffId = user?.email  // ✅ Lấy staffId để gửi message
 
-    console.log('[ChatSupport] Current Staff:', { staffEmail, staffId })
 
     const [pendingConversations, setPendingConversations] = useState<Conversation[]>([])
     const [myConversations, setMyConversations] = useState<Conversation[]>([])
@@ -39,7 +38,6 @@ const ChatSupport = () => {
             const pending = await chatApi.getPendingConversations()
             setPendingConversations(pending)
         } catch (error) {
-            console.error('Error loading pending:', error)
             toast.push(<Notification type="danger" title="Error">Failed to load pending requests</Notification>)
         } finally {
             setLoading(false)
@@ -53,7 +51,6 @@ const ChatSupport = () => {
             const myConvs = await chatApi.getMyConversations(staffEmail)
             setMyConversations(myConvs)
         } catch (error) {
-            console.error('Error loading my conversations:', error)
             toast.push(<Notification type="danger" title="Error">Failed to load your conversations</Notification>)
         }
     }, [staffEmail])
@@ -71,7 +68,6 @@ const ChatSupport = () => {
 
         // Subscribe pending requests
         const pendingSub = subscribe('/topic/staff/pending', (data: WebSocketMessage) => {
-            console.log('[WS] Received on /topic/staff/pending:', data)
             if (data.type === 'NEW_REQUEST' || data.type === 'STATUS_CHANGE') {
                 loadPendingOnly()
             }
@@ -79,7 +75,6 @@ const ChatSupport = () => {
 
         // Subscribe removed pending
         const removedSub = subscribe('/topic/staff/pending/removed', (data: WebSocketMessage) => {
-            console.log('[WS] Received on /topic/staff/pending/removed:', data)
             if (data.conversationId) {
                 setPendingConversations((prev) => prev.filter((c) => c.id !== data.conversationId))
             }
@@ -96,7 +91,6 @@ const ChatSupport = () => {
         if (!isConnected || !activeConversation) return
 
         const conversationSub = subscribe(`/topic/conversation/${activeConversation.id}`, (data: WebSocketMessage) => {
-            console.log('[WS] Received on conversation topic:', data)
             
             // ✅ Xử lý MESSAGE - data nằm trong data.data
             if (data.type === 'MESSAGE' && data.data) {
@@ -139,7 +133,6 @@ const ChatSupport = () => {
         try {
             if (!staffEmail) return
             setAcceptingId(conversationId)
-            console.log('[ChatSupport] Accepting conversation', conversationId, 'by', staffEmail)
 
             const accepted = await chatApi.acceptConversation(conversationId, staffEmail)
             toast.push(<Notification type="success" title="Accepted">Conversation accepted successfully</Notification>)
@@ -150,7 +143,6 @@ const ChatSupport = () => {
             setActiveConversation(detail)
             setMessages(detail.messages)
         } catch (error) {
-            console.error('Error accepting conversation:', error)
             toast.push(<Notification type="danger" title="Error">Failed to accept conversation</Notification>)
         } finally {
             setAcceptingId(null)
@@ -165,7 +157,6 @@ const ChatSupport = () => {
             setActiveConversation(detail)
             setMessages(detail.messages)
         } catch (error) {
-            console.error('Error loading conversation detail:', error)
             toast.push(<Notification type="danger" title="Error">Failed to load conversation detail</Notification>)
         } finally {
             setLoading(false)
@@ -175,16 +166,8 @@ const ChatSupport = () => {
     // ✅ Send message - GỬI STAFF ID thay vì email
     const handleSendMessage = (content: string) => {
         if (!activeConversation || !staffId) {
-            console.warn('[ChatSupport] Cannot send message: missing conversation or staffId')
             return
         }
-        
-        console.log('[ChatSupport] Sending message:', {
-            conversationId: activeConversation.id,
-            senderId: staffId,  // ✅ Gửi staffId (Long) thay vì email
-            senderRole: SenderRole.STAFF,
-            content
-        })
 
         sendMessage({
             conversationId: activeConversation.id,
@@ -204,7 +187,6 @@ const ChatSupport = () => {
             loadPendingOnly()
             loadMyConversations()
         } catch (error) {
-            console.error('Error closing conversation:', error)
             toast.push(<Notification type="danger" title="Error">Failed to close conversation</Notification>)
         }
     }

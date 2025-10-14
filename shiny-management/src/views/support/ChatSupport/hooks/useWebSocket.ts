@@ -15,17 +15,13 @@ export const useWebSocket = () => {
             reconnectDelay: 5000,
             heartbeatIncoming: 4000,
             heartbeatOutgoing: 4000,
-            debug: (msg) => console.log('[STOMP]', msg),
             onConnect: () => {
-                console.log('[WebSocket] ✅ Connected')
                 setIsConnected(true)
             },
             onDisconnect: () => {
-                console.log('[WebSocket] 🔌 Disconnected')
                 setIsConnected(false)
             },
             onStompError: (frame) => {
-                console.error('[WebSocket] ❌ STOMP Error:', frame)
             },
         })
 
@@ -33,7 +29,6 @@ export const useWebSocket = () => {
         clientRef.current = stompClient
 
         return () => {
-            console.log('[WebSocket] 🔌 Cleaning up connections')
             // Unsubscribe all
             subscriptions.current.forEach((unsubscribe) => unsubscribe())
             subscriptions.current.clear()
@@ -44,27 +39,19 @@ export const useWebSocket = () => {
 
     const subscribe = (topic: string, handler: (data: WebSocketMessage) => void) => {
         if (!clientRef.current) {
-            console.warn('[WebSocket] ⚠️ Client not initialized')
             return { unsubscribe: () => {} }
         }
 
-        console.log('[WebSocket] 📡 Subscribing to:', topic)
 
         const subscription = clientRef.current.subscribe(topic, (msg: IMessage) => {
-            try {
                 const parsed = JSON.parse(msg.body)
-                console.log(`[WebSocket] 📨 Received on ${topic}:`, parsed)
                 handler(parsed)
-            } catch (error) {
-                console.warn('[WebSocket] ⚠️ Invalid JSON:', msg.body, error)
-            }
         })
 
         subscriptions.current.set(topic, () => subscription.unsubscribe())
         
         return {
             unsubscribe: () => {
-                console.log('[WebSocket] 🔕 Unsubscribing from:', topic)
                 subscription.unsubscribe()
                 subscriptions.current.delete(topic)
             },
@@ -73,11 +60,9 @@ export const useWebSocket = () => {
 
     const sendMessage = (payload: unknown) => {
         if (!clientRef.current || !isConnected) {
-            console.warn('[WebSocket] ⚠️ Cannot send message: not connected')
             return
         }
 
-        console.log('[WebSocket] 📤 Sending message:', payload)
 
         clientRef.current.publish({
             destination: '/app/chat.sendMessage',

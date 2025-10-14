@@ -118,24 +118,11 @@ const ChatWindow = ({
                     <>
                         {messages.map((msg) => {
                             const isStaff = msg.senderRole === SenderRole.STAFF
-                            
-                            // 🐛 DEBUG: Log để kiểm tra
-                            console.log('🔍 Message:', {
-                                id: msg.id,
-                                senderRole: msg.senderRole,
-                                senderId: msg.senderId,
-                                currentStaffId: currentStaffId,
-                                isStaff: isStaff
-                            })
-                            
-                            // ✅ FIX: Kiểm tra xem tin nhắn có phải của chính staff đang chat không
                             const isCurrentUser = 
                                 isStaff && 
                                 currentStaffId !== undefined && 
                                 msg.senderId === currentStaffId
                             
-                            console.log('✅ isCurrentUser:', isCurrentUser)
-
                             return (
                                 <div
                                     key={msg.id}

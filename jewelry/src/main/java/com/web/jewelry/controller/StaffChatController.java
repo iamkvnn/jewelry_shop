@@ -46,11 +46,6 @@ public class StaffChatController {
             @PathVariable Long id,
             @RequestParam String staffEmail) {
 
-        System.out.println("\n╔══════════════════════════════════════╗");
-        System.out.println("║  👨‍💼 STAFF ACCEPT CONVERSATION       ║");
-        System.out.println("╚══════════════════════════════════════╝");
-        System.out.println("📋 Request: conversationId=" + id + ", staffEmail=" + staffEmail);
-
         Conversation conversation = conversationService.acceptByEmail(id, staffEmail);
         ConversationResponse response = modelMapper.map(conversation, ConversationResponse.class);
 
@@ -64,25 +59,18 @@ public class StaffChatController {
                 .message("Nhân viên đã chấp nhận yêu cầu hỗ trợ!")
                 .build();
 
-        System.out.println("📤 Broadcasting to customer → /topic/conversation/" + id);
         messagingTemplate.convertAndSend("/topic/conversation/" + id, customerNotification);
-        System.out.println("✅ Customer notified successfully!");
-
         // Gửi thông báo cho staff khác
-        System.out.println("📤 Broadcasting to staff → /topic/staff/pending/removed");
         messagingTemplate.convertAndSend("/topic/staff/pending/removed",
                 WebSocketResponse.builder()
                         .type("REMOVED")
                         .conversationId(id)
                         .build());
-        System.out.println("✅ Staff pending list updated!");
-
         // Thông báo cập nhật danh sách pending
         messagingTemplate.convertAndSend("/topic/staff/pending",
                 WebSocketResponse.builder()
                         .type("STATUS_CHANGE")
                         .build());
-        System.out.println("✅ Staff status updated!");
 
         return ResponseEntity.ok(response);
     }
@@ -94,12 +82,6 @@ public class StaffChatController {
     public ResponseEntity<ConversationResponse> closeConversation(
             @PathVariable Long conversationId,
             @RequestParam String staffEmail) {
-
-        System.out.println("\n╔══════════════════════════════════════╗");
-        System.out.println("║  🔒 STAFF CLOSE CONVERSATION          ║");
-        System.out.println("╚══════════════════════════════════════╝");
-        System.out.println("📋 Request: conversationId=" + conversationId + ", staffEmail=" + staffEmail);
-
         Conversation conversation = conversationService.closeByEmail(conversationId, staffEmail);
         ConversationResponse response = modelMapper.map(conversation, ConversationResponse.class);
 
@@ -110,9 +92,8 @@ public class StaffChatController {
                 .conversationId(conversationId)
                 .build();
 
-        System.out.println("📤 Broadcasting CLOSE to /topic/conversation/" + conversationId);
         messagingTemplate.convertAndSend("/topic/conversation/" + conversationId, closeNotification);
-        System.out.println("✅ Close message sent to both sides!");
+
 
         return ResponseEntity.ok(response);
     }

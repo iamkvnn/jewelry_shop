@@ -14,7 +14,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.enableSimpleBroker("/topic");
         config.setApplicationDestinationPrefixes("/app");
-        System.out.println("✅ Message broker configured: /topic for subscriptions, /app for messages");
     }
 
     @Override
@@ -22,7 +21,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.addEndpoint("/ws")
                 .setAllowedOriginPatterns("*")
                 .withSockJS();
-        System.out.println("✅ STOMP endpoint registered: /ws");
     }
 
 }

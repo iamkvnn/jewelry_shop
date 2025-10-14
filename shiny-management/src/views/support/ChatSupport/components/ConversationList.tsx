@@ -19,20 +19,10 @@ const ConversationList = ({
 }: ConversationListProps) => {
     const [searchQuery, setSearchQuery] = useState('')
 
-    // ✅ Log mỗi khi conversations được truyền vào
     useEffect(() => {
-        console.log(
-            '[ConversationList] Conversations loaded:',
-            conversations?.length,
-            conversations
-        )
     }, [conversations])
 
-    // ✅ Log khi thay đổi search
     useEffect(() => {
-        if (searchQuery) {
-            console.log('[ConversationList] Filtering conversations with query:', searchQuery)
-        }
     }, [searchQuery])
 
     const filteredConversations = conversations.filter((conv) => {
@@ -64,11 +54,6 @@ const ConversationList = ({
 
     // ✅ Log danh sách sau khi lọc
     useEffect(() => {
-        console.log(
-            '[ConversationList] Filtered conversations:',
-            filteredConversations.length,
-            filteredConversations
-        )
     }, [filteredConversations])
 
     return (
@@ -99,10 +84,6 @@ const ConversationList = ({
                             <div
                                 key={conv.id}
                                 onClick={() => {
-                                    console.log(
-                                        '[ConversationList] Selected conversation ID:',
-                                        conv.id
-                                    )
                                     onSelectConversation(conv.id)
                                 }}
                                 className={`p-3 rounded-lg cursor-pointer transition-all ${

@@ -21,12 +21,10 @@ export const chatApi = {
      * POST /api/v1/staff/chat/{conversationId}/accept?staffEmail={email}
      */
     acceptConversation: async (conversationId: number, staffEmail: string): Promise<Conversation> => {
-        console.log('[chatApi] calling acceptConversation', { conversationId, staffEmail })
         const response = await ApiService.fetchData<Conversation>({
             url: `${API_PREFIX}/${conversationId}/accept?staffEmail=${staffEmail}`,
             method: 'post',
         })
-        console.log('[chatApi] acceptConversation response:', response.data)
         return response.data
     },
 
@@ -50,12 +48,10 @@ export const chatApi = {
      * GET /api/v1/staff/chat/my-conversations?staffEmail={email}
      */
     getMyConversations: async (staffEmail: string): Promise<Conversation[]> => {
-        console.log('[chatApi] Calling getMyConversations with staffEmail:', staffEmail)
         const response = await ApiService.fetchData<Conversation[]>({
             url: `${API_PREFIX}/my-conversations?staffEmail=${staffEmail}`,
             method: 'get',
         })
-        console.log('[chatApi] Response from getMyConversations:', response)
         return response.data
     },
 
