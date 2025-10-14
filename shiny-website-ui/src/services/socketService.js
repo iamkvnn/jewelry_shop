@@ -3,84 +3,41 @@ import SockJS from "sockjs-client";
 
 let stompClient = null;
 
-/**
- * Kết nối WebSocket cho customer
- */
 export const connectWebSocket = (conversationId, onMessageReceived) => {
-  // Disconnect nếu đã có connection cũ
-  if (stompClient && stompClient.active) {
-    stompClient.deactivate();
-  }
-
-  const socket = new SockJS("http://localhost:8080/ws");
-
+  const socket = new SockJS("http://localhost:8080/ws"); // endpoint WebSocket
   stompClient = new Client({
     webSocketFactory: () => socket,
-    reconnectDelay: 5000,
-    heartbeatIncoming: 4000,
-    heartbeatOutgoing: 4000,
-    
+    debug: (str) => console.log(str),
     onConnect: () => {
+      console.log("Connected to WebSocket");
 
-      // Subscribe vào conversation topic
+      // subscribe topic conversation
       stompClient.subscribe(`/topic/conversation/${conversationId}`, (msg) => {
+        let message;
         try {
-          const parsed = JSON.parse(msg.body);
-          onMessageReceived(parsed);
-        } catch (error) {
-          onMessageReceived({ type: "RAW", data: msg.body });
+          message = typeof msg.body === "string" ? JSON.parse(msg.body) : msg.body;
+        } catch (e) {
+          console.warn("Could not parse message as JSON:", msg.body);
+          message = msg.body;
         }
+        onMessageReceived(message);
       });
     },
-    
-    onDisconnect: () => {
-    },
-    
-    onStompError: (frame) => {
-    },
   });
-
   stompClient.activate();
 };
 
-/**
- * Disconnect WebSocket
- */
-export const disconnectWebSocket = () => {
-  if (stompClient && stompClient.active) {
-    stompClient.deactivate();
-    stompClient = null;
-  }
-};
-
-/**
- * Gửi message qua WebSocket
- * @param {number} conversationId 
- * @param {number} senderId - Customer ID (Long)
- * @param {string} content 
- */
 export const sendMessage = (conversationId, senderId, content) => {
-  if (!stompClient || !stompClient.connected) {
-    return;
-  }
-
+  if (!stompClient) return;
+  const senderRole = "CUSTOMER";
   const msg = {
     conversationId,
-    senderId,  // ✅ Gửi userId dạng Long (number)
-    senderRole: "CUSTOMER",
+    senderId,
+    senderRole,
     content,
   };
-
-
   stompClient.publish({
     destination: "/app/chat.sendMessage",
     body: JSON.stringify(msg),
   });
-};
-
-/**
- * Check if WebSocket is connected
- */
-export const isConnected = () => {
-  return stompClient && stompClient.connected;
 };

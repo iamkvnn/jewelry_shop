@@ -4,11 +4,8 @@ import com.web.jewelry.dto.request.ConversationRequest;
 import com.web.jewelry.dto.request.MessageRequest;
 import com.web.jewelry.dto.response.ConversationResponse;
 import com.web.jewelry.dto.response.MessageResponse;
-import com.web.jewelry.dto.response.WebSocketResponse;
 import com.web.jewelry.model.Conversation;
 import com.web.jewelry.model.Message;
-import com.web.jewelry.model.Staff;
-import com.web.jewelry.repository.StaffRepository;
 import com.web.jewelry.service.conversation.IConversationService;
 import com.web.jewelry.service.message.IMessageService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +16,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("${api.prefix}/chat")
@@ -29,21 +27,15 @@ public class ChatController {
     private final IMessageService messageService;
     private final SimpMessagingTemplate messagingTemplate;
     private final ModelMapper modelMapper;
-    private final StaffRepository staffRepository;
 
+    // --- Conversation APIs ---
     @PostMapping("/request")
     public ResponseEntity<ConversationResponse> createConversation(@RequestBody ConversationRequest request) {
         Conversation conversation = conversationService.createRequest(request.getCustomerId());
         ConversationResponse response = toConversationResponse(conversation);
 
-        WebSocketResponse wsResponse = WebSocketResponse.builder()
-                .type("NEW_REQUEST")
-                .data(response)
-                .conversationId(conversation.getId())
-                .build();
-
-        messagingTemplate.convertAndSend("/topic/staff/pending", wsResponse);
-
+        // thông báo tới nhân viên có yêu cầu mới
+        messagingTemplate.convertAndSend("/topic/pending", response);
         return ResponseEntity.ok(response);
     }
 
@@ -55,15 +47,8 @@ public class ChatController {
         Conversation conversation = conversationService.accept(id, staffId);
         ConversationResponse response = toConversationResponse(conversation);
 
-        WebSocketResponse customerNotification = WebSocketResponse.builder()
-                .type("STATUS")
-                .status("ACCEPTED")
-                .staffId(staffId)
-                .conversationId(id)
-                .build();
-
-        messagingTemplate.convertAndSend("/topic/conversation/" + id, customerNotification);
-
+        // thông báo cho khách hàng conversation được accept
+        messagingTemplate.convertAndSend("/topic/conversation/" + id,   Map.of("type", "STATUS", "status", "ACCEPTED"));
         return ResponseEntity.ok(response);
     }
 
@@ -72,18 +57,12 @@ public class ChatController {
         Conversation conversation = conversationService.close(id);
         ConversationResponse response = toConversationResponse(conversation);
 
-        WebSocketResponse closeNotification = WebSocketResponse.builder()
-                .type("STATUS")
-                .status("CLOSED")
-                .message("Cuộc trò chuyện đã kết thúc")
-                .conversationId(id)
-                .build();
-
-        messagingTemplate.convertAndSend("/topic/conversation/" + id, closeNotification);
-
+        // thông báo kết thúc chat
+        messagingTemplate.convertAndSend("/topic/conversation/" + id, "CLOSED");
         return ResponseEntity.ok(response);
     }
 
+    // --- Message APIs ---
     @GetMapping("/{id}/messages")
     public ResponseEntity<List<MessageResponse>> getMessages(@PathVariable Long id) {
         List<MessageResponse> messages = messageService.getMessages(id)
@@ -94,82 +73,22 @@ public class ChatController {
         return ResponseEntity.ok(messages);
     }
 
-    /**
-     * 🔥 CRITICAL: WebSocket handler cho việc gửi message
-     */
     @MessageMapping("/chat.sendMessage")
     public void handleMessage(MessageRequest request) {
-        try {
-            // Tạo message entity
-            Message message = new Message();
-            message.setConversationId(request.getConversationId());
-            message.setSenderRole(request.getSenderRole());
-            message.setContent(request.getContent());
+        Message message = new Message();
+        message.setConversationId(request.getConversationId());
+        message.setSenderId(request.getSenderId());
+        message.setSenderRole(request.getSenderRole());
+        message.setContent(request.getContent());
+        Message saved = messageService.saveMessage(message);
 
-            // Resolve senderId
-            Long actualSenderId = resolveSenderId(request);
-            message.setSenderId(actualSenderId);
+        MessageResponse response = toMessageResponse(saved);
 
-            // Lưu message vào DB
-            Message saved = messageService.saveMessage(message);
-
-            // Convert to response
-            MessageResponse messageResponse = toMessageResponse(saved);
-
-            // Wrap trong WebSocketResponse
-            WebSocketResponse wsResponse = WebSocketResponse.builder()
-                    .type("MESSAGE")
-                    .data(messageResponse)
-                    .conversationId(request.getConversationId())
-                    .senderRole(request.getSenderRole().toString())
-                    .build();
-
-
-            // Broadcast message
-            String destination = "/topic/conversation/" + request.getConversationId();
-
-
-            messagingTemplate.convertAndSend(destination, wsResponse);
-
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-            throw e;
-        }
+        // gửi tin nhắn đến cả 2 phía (staff và customer) trong conversation
+        messagingTemplate.convertAndSend("/topic/conversation/" + request.getConversationId(), response);
     }
 
-    /**
-     * Resolve senderId từ Object sang Long
-     */
-    private Long resolveSenderId(MessageRequest request) {
-        Object senderId = request.getSenderId();
-        // Nếu đã là Long
-        if (senderId instanceof Long) {
-            return (Long) senderId;
-        }
-        // Nếu là Integer
-        else if (senderId instanceof Integer) {
-            return ((Integer) senderId).longValue();
-        }
-        // Nếu là String
-        else if (senderId instanceof String) {
-            String str = (String) senderId;
-            // Thử parse thành Long trước (nếu là số dạng string)
-            try {
-                Long id = Long.parseLong(str);
-                return id;
-            } catch (NumberFormatException e) {
-                // Nếu không phải số -> đây là email
-                Staff staff = staffRepository.findByEmail(str)
-                        .orElseThrow(() -> new RuntimeException("Staff not found with email: " + str));
-                return staff.getId();
-            }
-        }
-
-        throw new IllegalArgumentException("Invalid senderId type: " + senderId.getClass().getName());
-    }
-
+    // --- Mapping helpers ---
     private ConversationResponse toConversationResponse(Conversation conversation) {
         return modelMapper.map(conversation, ConversationResponse.class);
     }
