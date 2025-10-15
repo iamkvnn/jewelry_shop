@@ -50,21 +50,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.headers(headers -> {
-            headers
-                .frameOptions(frameOptions -> frameOptions.deny())
-                .contentSecurityPolicy(csp -> csp
-                    .policyDirectives(
-                            "default-src 'self'; " +
-                            "script-src 'self'; " +
-                            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-                            "img-src 'self' data: https://cdn.pnj.io; " +
-                            "font-src 'self' https://fonts.gstatic.com; " +
-                            "connect-src 'self'; " +
-                            "frame-ancestors 'none';"
-                    )
-                );
-            });
+        httpSecurity.httpBasic(AbstractHttpConfigurer::disable);
         httpSecurity.authorizeHttpRequests(request -> request.requestMatchers(PRIVATE_ENDPOINTS).authenticated()
                 .anyRequest().permitAll());
         httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer
@@ -82,14 +68,16 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of(feBaseUrlCus, feBaseUrlAdmin));
+        config.setAllowedOriginPatterns(List.of(feBaseUrlCus, feBaseUrlAdmin)); // <-- dùng cái này
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
 
+        // nếu FE gọi API /api/v1/** thì map này là đủ
         source.registerCorsConfiguration("/**", config);
         return source;
     }
+
 
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter(){

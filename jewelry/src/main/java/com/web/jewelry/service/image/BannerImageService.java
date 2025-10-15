@@ -50,7 +50,7 @@ public class BannerImageService implements IImageService {
         imageSaverContext.deleteImage(existingImage.getName());
         Map<String, String> imageData = imageSaverContext.saveImage(file);
         existingImage.setName(imageData.get("publicId"));
-        existingImage.setUrl("/banners/banner/" + imageData.get("url"));
+        existingImage.setUrl("/api/v1/banners/banner/" + imageData.get("url"));
         existingImage.setUpdatedAt(LocalDateTime.now());
         bannerImageRepository.save(existingImage);
         return convertToResponse(existingImage);

@@ -1,10 +1,10 @@
 import { faHeadset, faMinimize, faPaperPlane, faSpinner, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import chatApi from "../../../api/chatApi";
-import { connectWebSocket, sendMessage } from "../../../services/socketService";
+import { connectWebSocket, disconnectWebSocket, sendMessage } from "../../../services/socketService";
 import styles from "./WindowChat.module.css";
 
 function WindowChat({ isOpen, onClose }) {
@@ -12,25 +12,32 @@ function WindowChat({ isOpen, onClose }) {
   const [isConnecting, setIsConnecting] = useState(true);
   const [messages, setMessages] = useState([]);
   const [conversationId, setConversationId] = useState(null);
-  const [connectionStatus, setConnectionStatus] = useState("requesting"); // requesting, waiting, connected, error
+  const [connectionStatus, setConnectionStatus] = useState("requesting");
   const [error, setError] = useState(null);
   const userId = useSelector((state) => state.user.current.id);
+  const messagesEndRef = useRef(null);
+
+  // Auto scroll to bottom khi có message mới
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   // Tạo conversation khi mở chat
   useEffect(() => {
     if (isOpen && isConnecting && userId && connectionStatus === "requesting") {
-      console.log("Creating conversation for user:", userId);
       setError(null);
 
       chatApi
         .createConversation(userId)
         .then((response) => {
-          console.log("Conversation created:", response);
           setConnectionStatus("waiting");
           setConversationId(response.id);
         })
         .catch((error) => {
-          console.error("Error creating conversation:", error);
           setError("Không thể kết nối. Vui lòng thử lại sau.");
           setConnectionStatus("error");
           setIsConnecting(false);
@@ -41,44 +48,70 @@ function WindowChat({ isOpen, onClose }) {
   useEffect(() => {
     if (conversationId) {
       connectWebSocket(conversationId, (message) => {
-        // Nếu là trạng thái
-        if (message.type === "STATUS") {
-          if (message.status === "ACCEPTED") {
-            setConnectionStatus("connected");
-            setIsConnecting(false);
 
-            // Thêm tin nhắn chào mừng khi kết nối thành công
-            const welcomeMessage = {
-              id: Date.now(),
-              text: "Đã kết nối với nhân viên hỗ trợ. Bạn có câu hỏi gì không?",
-              sender: "support",
-              timestamp: new Date().toLocaleTimeString(),
-            };
-            setMessages((prev) => [...prev, welcomeMessage]);
-          } else if (message.status === "CLOSED") {
-            setConnectionStatus("error");
-            setIsConnecting(false);
-          }
-        }
-        // Nếu là tin nhắn chat
-        else if (message.type === "MESSAGE") {
-          setMessages((prev) => [
-            ...prev,
-            {
-              id: message.id,
-              text: message.content,
-              sender: message.senderId === userId ? "user" : "support",
-              timestamp: new Date(message.createdAt).toLocaleTimeString(),
-            },
-          ]);
+        switch (message.type) {
+          case "STATUS":
+            if (message.status === "ACCEPTED") {
+              setConnectionStatus("connected");
+              setIsConnecting(false);
+              setMessages((prev) => [
+                ...prev,
+                {
+                  id: Date.now(),
+                  text: message.message || "Nhân viên đã chấp nhận yêu cầu hỗ trợ!",
+                  sender: "support",
+                  timestamp: new Date().toLocaleTimeString(),
+                },
+              ]);
+            } else if (message.status === "CLOSED") {
+              setConnectionStatus("error");
+              setIsConnecting(false);
+              setError(message.message || "Cuộc hội thoại đã kết thúc.");
+            }
+            break;
+
+          case "MESSAGE":
+            const messageData = message.data;
+            if (messageData) {
+              // ⚠️ Bỏ qua nếu sender là chính user hiện tại (tránh bị render 2 lần)
+              if (messageData.senderRole === "CUSTOMER" && messageData.senderId === userId) {
+                return;
+              }
+
+              setMessages((prev) => [
+                ...prev,
+                {
+                  id: messageData.id || Date.now(),
+                  text: messageData.content,
+                  sender: messageData.senderRole === "CUSTOMER" ? "user" : "support",
+                  timestamp: new Date(new Date(messageData.sentAt).getTime() + 7 * 60 * 60 * 1000).toLocaleTimeString(),
+                },
+              ]);
+            }
+            break;
+
+          default:
         }
       });
     }
-  }, [conversationId, userId]);
 
-  // Reset trạng thái khi đóng chat
+    // ✅ Cleanup: disconnect WebSocket khi component unmount hoặc conversationId thay đổi
+    return () => {
+      if (conversationId) {
+        disconnectWebSocket();
+      }
+    };
+  }, [conversationId]);
+
+  // ✅ Reset trạng thái và disconnect khi đóng chat
   useEffect(() => {
     if (!isOpen) {
+      // Disconnect WebSocket trước
+      if (conversationId) {
+        disconnectWebSocket();
+      }
+      
+      // Reset state
       setIsConnecting(true);
       setMessages([]);
       setMessage("");
@@ -86,10 +119,10 @@ function WindowChat({ isOpen, onClose }) {
       setConnectionStatus("requesting");
       setError(null);
     }
-  }, [isOpen]);
+  }, [isOpen, conversationId]);
 
   const handleSendMessage = async () => {
-    if (message.trim() && conversationId) {
+    if (message.trim() && conversationId && connectionStatus === "connected") {
       const newMessage = {
         id: messages.length + 1,
         text: message,
@@ -99,21 +132,21 @@ function WindowChat({ isOpen, onClose }) {
 
       // Hiển thị tin nhắn ngay lập tức cho UX tốt hơn
       setMessages([...messages, newMessage]);
+      const messageText = message;
       setMessage("");
 
       try {
-        // TODO: Gọi API gửi tin nhắn khi có endpoint
-        await sendMessage(conversationId, userId, message);
-        // Trong thực tế, tin nhắn phản hồi sẽ đến qua WebSocket hoặc polling
-        // Tạm thời giữ simulation để test UI
+        // ✅ Gửi với userId (Long) - backend sẽ xử lý đúng
+        await sendMessage(conversationId, userId, messageText);
       } catch (error) {
-        console.error("Error sending message:", error);
+        // Có thể thêm logic retry hoặc hiển thị error cho user
       }
     }
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
       handleSendMessage();
     }
   };
@@ -181,17 +214,20 @@ function WindowChat({ isOpen, onClose }) {
             </div>
           </div>
         ) : (
-          messages.map((msg) => (
-            <div
-              key={msg.id}
-              className={`${styles.message} ${msg.sender === "user" ? styles.userMessage : styles.supportMessage}`}
-            >
-              <div className={styles.messageContent}>
-                <p>{msg.text}</p>
-                <span className={styles.timestamp}>{msg.timestamp}</span>
+          <>
+            {messages.map((msg) => (
+              <div
+                key={msg.id}
+                className={`${styles.message} ${msg.sender === "user" ? styles.userMessage : styles.supportMessage}`}
+              >
+                <div className={styles.messageContent}>
+                  <p>{msg.text}</p>
+                  <span className={styles.timestamp}>{msg.timestamp}</span>
+                </div>
               </div>
-            </div>
-          ))
+            ))}
+            <div ref={messagesEndRef} ></div>
+          </>
         )}
       </div>
 
