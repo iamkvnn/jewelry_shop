@@ -7,6 +7,7 @@ import Home from "./features/Home/Home";
 import InfoCustomer from "./features/InfoCustomer/InfoCus";
 import Header from "./components/Header/header";
 import Footer from "./components/Footer/footer";
+import CompareBar from "./features/Compare/CompareBar";
 import AllProduct from "./features/AllProduct/AllProduct";
 import ProductDetail from "./features/ProductDetail/ProductDetail";
 import Cart from "./features/Cart/Cart";
@@ -25,6 +26,7 @@ import WishListPage from "./features/WishListPage/WishlistPage";
 import PriavcyAndTerm from "./components/PrivacyAndTerm";
 import ContactUs from "./components/ContactUs";
 import ConfirmDeleteAcccount from "./features/ConfirmDeleteAcount";
+import ComparePage from "./features/Compare/ComparePage";
 function App() {
   const location = useLocation();
   const hideLayoutRoutes = ["/recover-password", "/confirm-delete"];
@@ -58,6 +60,7 @@ function App() {
         <Route path="/thankyou-return" element={<ThankYouReturn />} />
         <Route path="/recover-password" element={<RecoverPassword />} />
         <Route path="/wishlist" element={<WishListPage />}></Route>
+        <Route path="/compare" element={<ComparePage />}></Route>
         <Route path="/error/:statusCode" element={<HandleError />}></Route>
         <Route
           path="/auth/oauth2/redirect"
@@ -69,6 +72,7 @@ function App() {
         <Route path="*" element={<Navigate to="/error/404" replace />} />
       </Routes>
       {!shouldHideLayout && <Footer />}
+      {!shouldHideLayout && <CompareBar />}
     </div>
   );
 }
