@@ -3,9 +3,11 @@ import styles from "./ProductInfo.module.css";
 import PropTypes from "prop-types";
 import CartApi from "../../../../api/cartApi";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { addToCompare } from "../../../../features/Compare/compareSlice";
+import { Button } from "@mui/material";
 import silverMaterial from "/image/allproduct/material_silver.png";
 import whiteGoldMaterial from "/image/allproduct/material_white_gold.png";
 import gold10KMaterial from "/image/allproduct/material_gold10k.png";
@@ -82,6 +84,7 @@ function ProductInfo({ product, isInWishlist, updateWishlist }) {
   const [stockQuantity, setStockQuantity] = useState(0);
   const navigate = useNavigate();
   const isLoggedIn = !!useSelector((state) => state.user.current)?.email;
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (product.productSizes.length > 0) {
@@ -138,6 +141,27 @@ function ProductInfo({ product, isInWishlist, updateWishlist }) {
       console.error("Lỗi khi thêm vào giỏ hàng:", error);
       toast.error(error?.response?.data?.message || "Thêm vào giỏ hàng thất bại. Vui lòng thử lại sau. ❌", { autoClose: 2000 });
     }
+  };
+
+  const handleAddCompare = () => {
+    const image = product?.images?.[0]?.url || "/logo.png";
+    dispatch(
+      addToCompare({
+        id: product.id,
+        title: product.title,
+        image,
+        categoryId: product?.category?.id,
+        categoryName: product?.category?.name,
+        collectionName: product?.collection?.name,
+        material: product?.material,
+        productSizes: product?.productSizes || [],
+        status: product?.status,
+        createdAt: product?.createdAt,
+        attributes: product?.attributes || [],
+        description: product?.description || "",
+      })
+    );
+    toast.success("Đã thêm vào danh sách so sánh", { autoClose: 1500 });
   };
 
   const [loading, setLoading] = useState(false);
@@ -261,11 +285,18 @@ function ProductInfo({ product, isInWishlist, updateWishlist }) {
             </>
           )}
           <button
+            className={styles.btnCompare}
+            onClick={handleAddCompare}
+          >
+            <span className={styles.icon}></span>
+            So sánh
+          </button>
+          <button
             className={`${styles.favoriteBtn} ${isInWishlist ? styles.added : ""}`}
             onClick={handleToggleWishlist}
           >
             <span className={styles.icon}></span>
-            {isInWishlist ? "Đã theo dõi sản phẩm" : "Theo dõi sản phẩm"}
+            {isInWishlist ? "Đã theo dỏi sản phẩm" : "Theo dõi sản phẩm"}
           </button>
           <div className={styles.dropdownContainer}>
             {dropdownData.map(({ title, content }, i) => (

@@ -10,9 +10,12 @@ import { useEffect, useState } from "react";
 import productApi from "../../api/productApi";
 import { useLocation, useNavigate } from "react-router-dom";
 import ScrollToTopButton from '../../components/ScrollToTopButton/ScrollToTopButton';
+import { useDispatch } from "react-redux";
+import { clearCompare } from "../Compare/compareSlice";
 
 const AllProduct = () => {
     const location = useLocation();
+    const dispatch = useDispatch();
     const [selectedCategoryId, setSelectedCategoryId] = useState(null);
     const [productList, setProductList] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -38,6 +41,11 @@ const AllProduct = () => {
     }, [location.search]);
 
     const navigate = useNavigate();
+
+    // Xóa dữ liệu compare khi vào trang products
+    useEffect(() => {
+        dispatch(clearCompare());
+    }, [dispatch]);
 
     const fetchProducts = async (currentPage) => {
         setLoading(true);
