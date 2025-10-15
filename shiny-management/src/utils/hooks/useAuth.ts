@@ -25,6 +25,7 @@ function useAuth() {
     const { token, signedIn } = useAppSelector((state) => state.auth.session)
 
     const defaultUser = {
+        id: 0,
         username: '',
         email: '',
         phone: '',

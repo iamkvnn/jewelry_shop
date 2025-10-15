@@ -10,6 +10,7 @@ export type ApiResponse<T> = {
 }
 export type SignInResponse = {
     user: {
+        id: number
         username: string
         email: string
         phone: string
