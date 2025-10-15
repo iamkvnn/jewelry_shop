@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import bannerApi from '../../../api/bannerApi';
 import styles from './Slider.module.css';
+import { API_URL } from '../../../api/axiosClient';
 
 const DEFAULT_SLIDES = [
     { img: 'img/sliderImg/imga.png', title: 'Discover the World', desc: 'Explore amazing destinations around the globe' },
@@ -32,7 +33,7 @@ const Slider = () => {
                     setSlides(DEFAULT_SLIDES);
                 } else {
                     const formatted = banners.map((banner, index) => ({
-                        img: "https://api.shinyjewelry.shop" + banner.url || 'https://via.placeholder.com/1200x600?text=No+Image',
+                        img: API_URL + banner.url || 'https://via.placeholder.com/1200x600?text=No+Image',
                         title: titles[index % titles.length],
                         desc: 'Explore our exclusive collection',
                     }));

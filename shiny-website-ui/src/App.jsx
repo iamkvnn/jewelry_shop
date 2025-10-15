@@ -1,32 +1,38 @@
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import "./App.css";
-import LoginRegister from "./features/LoginSignin";
-import MakeOrder from "./features/MakeOrder";
+import Footer from "./components/Footer/footer";
+import Header from "./components/Header/header";
+import PriavcyAndTerm from "./components/PrivacyAndTerm";
+import AllProduct from "./features/AllProduct/AllProduct";
+import Cart from "./features/Cart/Cart";
+import ChatContainer from "./features/Chat/ChatContainer";
 import CompleteOrder from "./features/CompleteOrder";
+import ConfirmDeleteAcccount from "./features/ConfirmDeleteAcount";
 import Home from "./features/Home/Home";
 import InfoCustomer from "./features/InfoCustomer/InfoCus";
 import Header from "./components/Header/header";
 import Footer from "./components/Footer/footer";
 import CompareBar from "./features/Compare/CompareBar";
 import AllProduct from "./features/AllProduct/AllProduct";
+import LoginRegister from "./features/LoginSignin";
+import OAuth2RedirectHandler from "./features/LoginSignin/OAuth2Redirect";
+import Register from "./features/LoginSignin/Register";
+import MakeOrder from "./features/MakeOrder";
+import MyOrder from "./features/MyOrder/AllMyOrder/MyOrders";
+import OrderDetail from "./features/MyOrder/OrderDetail/OrderDetails";
 import ProductDetail from "./features/ProductDetail/ProductDetail";
-import Cart from "./features/Cart/Cart";
-import HandleError from "./utils/HandleError";
-import ReviewProduct from "./features/Review/ReviewProduct";
-import ThankYou from "./features/Review/components/ThankyouReview";
+import RecoverPassword from "./features/RecoverPassword";
 import ReturnOrder from "./features/ReturnProduct/ReturnOrder";
 import ReturnProduct from "./features/ReturnProduct/ReturnProduct";
 import ThankYouReturn from "./features/ReturnProduct/components/ThankyouReturn";
-import MyOrder from "./features/MyOrder/AllMyOrder/MyOrders";
-import OrderDetail from "./features/MyOrder/OrderDetail/OrderDetails";
-import RecoverPassword from "./features/RecoverPassword";
-import OAuth2RedirectHandler from "./features/LoginSignin/OAuth2Redirect";
-import Register from "./features/LoginSignin/Register";
+import ReviewProduct from "./features/Review/ReviewProduct";
+import ThankYou from "./features/Review/components/ThankyouReview";
 import WishListPage from "./features/WishListPage/WishlistPage";
 import PriavcyAndTerm from "./components/PrivacyAndTerm";
 import ContactUs from "./components/ContactUs";
 import ConfirmDeleteAcccount from "./features/ConfirmDeleteAcount";
 import ComparePage from "./features/Compare/ComparePage";
+import HandleError from "./utils/HandleError";
 function App() {
   const location = useLocation();
   const hideLayoutRoutes = ["/recover-password", "/confirm-delete"];
@@ -38,15 +44,9 @@ function App() {
       <Routes>
         <Route path="/checkouts" element={<MakeOrder />}></Route>
         <Route path="/myorder/" element={<MyOrder />}></Route>
-        <Route
-          path="/myorder/orderdetail/:id"
-          element={<OrderDetail />}
-        ></Route>
+        <Route path="/myorder/orderdetail/:id" element={<OrderDetail />}></Route>
         <Route path="/login" element={<LoginRegister />}></Route>
-        <Route
-          path="/checkouts/thank-you/:orderId"
-          element={<CompleteOrder />}
-        ></Route>
+        <Route path="/checkouts/thank-you/:orderId" element={<CompleteOrder />}></Route>
         <Route path="/" element={<Home />}></Route>
         <Route path="/products" element={<AllProduct />}></Route>
         <Route path="/infocus" element={<InfoCustomer />}></Route>
@@ -62,10 +62,7 @@ function App() {
         <Route path="/wishlist" element={<WishListPage />}></Route>
         <Route path="/compare" element={<ComparePage />}></Route>
         <Route path="/error/:statusCode" element={<HandleError />}></Route>
-        <Route
-          path="/auth/oauth2/redirect"
-          element={<OAuth2RedirectHandler />}
-        />
+        <Route path="/auth/oauth2/redirect" element={<OAuth2RedirectHandler />} />
         <Route path="/register" element={<Register />} />
         <Route path="/privacy-and-term" element={<PriavcyAndTerm />} />
         <Route path="/confirm-delete" element={<ConfirmDeleteAcccount />} />
@@ -73,6 +70,7 @@ function App() {
       </Routes>
       {!shouldHideLayout && <Footer />}
       {!shouldHideLayout && <CompareBar />}
+      <ChatContainer />
     </div>
   );
 }
