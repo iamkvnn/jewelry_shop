@@ -1,5 +1,3 @@
-// src/views/support/ChatSupport/components/PendingRequests.tsx
-
 import { Card, Badge, Button, Avatar, Spinner } from '@/components/ui'
 import { HiOutlineClock, HiOutlineUser } from 'react-icons/hi'
 import { Conversation } from '../types'
@@ -75,9 +73,10 @@ const PendingRequests = ({
                                     <div className="flex items-center gap-2 mt-2">
                                         <HiOutlineClock className="text-gray-400" />
                                         <span className="text-xs text-gray-500">
-                                            {formatDistanceToNow(new Date(conv.createdAt), {
-                                                addSuffix: true,
-                                            })}
+                                            {formatDistanceToNow(
+                                                new Date(new Date(conv.createdAt).getTime() + 7 * 60 * 60 * 1000),
+                                                { addSuffix: true }
+                                            )}
                                         </span>
                                     </div>
                                 </div>

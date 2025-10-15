@@ -3,7 +3,7 @@ import { Notification, toast } from '@/components/ui'
 import PendingRequests from './components/PendingRequests'
 import ConversationList from './components/ConversationList'
 import ChatWindow from './components/ChatWindow'
-import { useWebSocket } from './hooks/useWebSocket'
+import { useWebSocket } from './hooks/useWebsocket'
 import { chatApi } from './services/chatApi'
 import {
     Conversation,
@@ -18,7 +18,7 @@ import { useAppSelector } from '@/store'
 const ChatSupport = () => {
     const user = useAppSelector((state) => state.auth.user)
     const staffEmail = user?.email
-    const staffId = user?.email  // ✅ Lấy staffId để gửi message
+    const staffId = user?.id
 
 
     const [pendingConversations, setPendingConversations] = useState<Conversation[]>([])

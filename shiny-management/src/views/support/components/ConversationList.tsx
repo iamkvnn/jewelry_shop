@@ -1,5 +1,3 @@
-// src/views/support/ChatSupport/components/ConversationList.tsx
-
 import { Card, Badge, Avatar, Input } from '@/components/ui'
 import { HiOutlineUser, HiOutlineSearch } from 'react-icons/hi'
 import { Conversation, ConversationStatus } from '../types'
@@ -121,9 +119,10 @@ const ConversationList = ({
                                             </p>
                                         )}
                                         <p className="text-xs text-gray-400">
-                                            {formatDistanceToNow(new Date(conv.updatedAt), {
-                                                addSuffix: true,
-                                            })}
+                                            {formatDistanceToNow(
+                                                new Date(new Date(conv.createdAt).getTime() + 7 * 60 * 60 * 1000),
+                                                { addSuffix: true }
+                                            )}
                                         </p>
                                     </div>
                                 </div>

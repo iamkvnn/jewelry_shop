@@ -10,6 +10,7 @@ import CompleteOrder from "./features/CompleteOrder";
 import ConfirmDeleteAcccount from "./features/ConfirmDeleteAcount";
 import Home from "./features/Home/Home";
 import InfoCustomer from "./features/InfoCustomer/InfoCus";
+import CompareBar from "./features/Compare/CompareBar";
 import LoginRegister from "./features/LoginSignin";
 import OAuth2RedirectHandler from "./features/LoginSignin/OAuth2Redirect";
 import Register from "./features/LoginSignin/Register";
@@ -24,6 +25,7 @@ import ThankYouReturn from "./features/ReturnProduct/components/ThankyouReturn";
 import ReviewProduct from "./features/Review/ReviewProduct";
 import ThankYou from "./features/Review/components/ThankyouReview";
 import WishListPage from "./features/WishListPage/WishlistPage";
+import ComparePage from "./features/Compare/ComparePage";
 import HandleError from "./utils/HandleError";
 function App() {
   const location = useLocation();

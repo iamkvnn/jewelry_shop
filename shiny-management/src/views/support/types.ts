@@ -1,5 +1,3 @@
-// src/views/support/ChatSupport/types.ts
-
 export enum ConversationStatus {
     PENDING = 'PENDING',
     ACCEPTED = 'ACCEPTED',

@@ -1,5 +1,3 @@
-// src/views/support/ChatSupport/components/ChatWindow.tsx
-
 import { useEffect, useRef, useState } from 'react'
 import { Card, Button, Input, Avatar, Spinner, Badge } from '@/components/ui'
 import {
@@ -9,7 +7,6 @@ import {
     HiOutlineChatAlt2,
 } from 'react-icons/hi'
 import { Message, SenderRole, ConversationDetail } from '../types'
-import { format } from 'date-fns'
 
 interface ChatWindowProps {
     conversation: ConversationDetail | null
@@ -140,9 +137,9 @@ const ChatWindow = ({
                                                 <span className="text-xs font-semibold">
                                                     {isStaff ? 'Staff' : 'Customer'}
                                                 </span>
-                                                <Badge className="bg-gray-200 text-gray-600 text-xs">
+                                                <span className="text-gray-600 text-xs">
                                                     ID: {msg.senderId}
-                                                </Badge>
+                                                </span>
                                             </div>
                                         )}
                                         <p className="whitespace-pre-wrap break-words">
@@ -155,7 +152,7 @@ const ChatWindow = ({
                                                     : 'text-gray-500'
                                             }`}
                                         >
-                                            {format(new Date(msg.sentAt), 'HH:mm')}
+                                            {new Date(new Date(msg.sentAt).getTime() + 7 * 60 * 60 * 1000).toLocaleTimeString()}
                                         </p>
                                     </div>
                                 </div>

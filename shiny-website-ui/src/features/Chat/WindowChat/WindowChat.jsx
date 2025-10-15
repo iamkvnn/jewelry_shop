@@ -84,7 +84,7 @@ function WindowChat({ isOpen, onClose }) {
                   id: messageData.id || Date.now(),
                   text: messageData.content,
                   sender: messageData.senderRole === "CUSTOMER" ? "user" : "support",
-                  timestamp: new Date(messageData.sentAt).toLocaleTimeString(),
+                  timestamp: new Date(new Date(messageData.sentAt).getTime() + 7 * 60 * 60 * 1000).toLocaleTimeString(),
                 },
               ]);
             }
@@ -226,7 +226,7 @@ function WindowChat({ isOpen, onClose }) {
                 </div>
               </div>
             ))}
-            <div ref={messagesEndRef} />
+            <div ref={messagesEndRef} ></div>
           </>
         )}
       </div>

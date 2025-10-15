@@ -140,8 +140,8 @@ const appsRoute: Routes = [
     {
         key: 'appsSupport.chatSupport',
         path: `${APP_PREFIX_PATH}/chat-support`,
-        component: lazy(() => import('@/views/support/ChatSupport/ChatSupport')),
-        authority: [MANAGER, STAFF],
+        component: lazy(() => import('@/views/support/ChatSupport')),
+        authority: [STAFF],
         meta: {
             header: 'Chat Support',
             headerContainer: true,
