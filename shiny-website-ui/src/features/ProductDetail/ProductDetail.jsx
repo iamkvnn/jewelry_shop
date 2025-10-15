@@ -64,6 +64,7 @@ const ProductDetail = () => {
     }
   }, [isLoggedIn, location.state, product]);
 
+
   // Hàm cập nhật wishlist
   const updateWishlist = async (product, action) => {
     if (!isLoggedIn) {
