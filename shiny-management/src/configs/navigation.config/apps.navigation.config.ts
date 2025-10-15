@@ -88,16 +88,6 @@ const appsNavigationConfig: NavigationTree[] = [
                 subMenu: [],
             },
             {
-                key: 'appsSupport.chatSupport',
-                path: `${APP_PREFIX_PATH}/chat-support`,
-                title: 'Chat Support',
-                translateKey: 'nav.appsSupport.chatSupport',
-                icon: 'feedback',
-                type: NAV_ITEM_TYPE_ITEM,
-                authority: [STAFF],
-                subMenu: [],
-            },
-            {
                 key: 'appsSales.vouchers',
                 path: `${APP_PREFIX_PATH}/vouchers`,
                 title: 'Vouchers',
