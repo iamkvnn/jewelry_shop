@@ -3,6 +3,7 @@ import styles from './Banner.module.css';
 import propTypes from 'prop-types';
 
 import bannerApi from '../../../../api/bannerApi';
+import { API_URL } from '../../../../api/axiosClient';
 
 const Banner = ({ fullName = "" }) => {
   const [bannerUrl, setBannerUrl] = useState('/image/infocustomer/banner.jpg'); // mặc định
@@ -13,7 +14,7 @@ const Banner = ({ fullName = "" }) => {
               const response = await bannerApi.getBannersByPosition('infocus');
               const data = response.data;
               if (Array.isArray(data) && data.length > 0 && data[0].url) {
-                  setBannerUrl('https://api.shinyjewelry.shop' + data[0].url);
+                  setBannerUrl(API_URL + data[0].url);
               }
           } catch (error) {
               console.error('Failed to load banner:', error);

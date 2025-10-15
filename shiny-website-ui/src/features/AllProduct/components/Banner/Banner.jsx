@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import styles from './Banner.module.css';
 import bannerApi from '../../../../api/bannerApi';
+import { API_URL } from '../../../../api/axiosClient';
 
 const Banner = () => {
     const [bannerUrl, setBannerUrl] = useState('/image/allproduct/banner.jpg'); // mặc định
@@ -11,7 +12,7 @@ const Banner = () => {
                 const response = await bannerApi.getBannersByPosition('product');
                 const data = response.data;
                 if (Array.isArray(data) && data.length > 0 && data[0].url) {
-                    setBannerUrl("https://api.shinyjewelry.shop" + data[0].url);
+                    setBannerUrl(API_URL + data[0].url);
                 }
             } catch (error) {
                 console.error('Failed to load banner:', error);

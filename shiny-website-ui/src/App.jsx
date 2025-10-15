@@ -54,6 +54,7 @@ function App() {
         <Route path="/thankyou-return" element={<ThankYouReturn />} />
         <Route path="/recover-password" element={<RecoverPassword />} />
         <Route path="/wishlist" element={<WishListPage />}></Route>
+        <Route path="/compare" element={<ComparePage />}></Route>
         <Route path="/error/:statusCode" element={<HandleError />}></Route>
         <Route path="/auth/oauth2/redirect" element={<OAuth2RedirectHandler />} />
         <Route path="/register" element={<Register />} />
@@ -62,6 +63,7 @@ function App() {
         <Route path="*" element={<Navigate to="/error/404" replace />} />
       </Routes>
       {!shouldHideLayout && <Footer />}
+      {!shouldHideLayout && <CompareBar />}
       <ChatContainer />
     </div>
   );

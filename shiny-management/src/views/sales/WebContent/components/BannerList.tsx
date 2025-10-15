@@ -16,6 +16,7 @@ import { Button } from '@/components/ui'
 import Upload from '@/components/ui/Upload'
 import Dialog from '@/components/ui/Dialog'
 import DoubleSidedImage from '@/components/shared/DoubleSidedImage'
+import appConfig from '@/configs/app.config'
 
 const BannerList = () => {
     const dispatch = useAppDispatch()
@@ -35,7 +36,7 @@ const BannerList = () => {
             name: record.name,
 
         })
-        setPreviewImage("https://api.shinyjewelry.shop" + record.url)
+        setPreviewImage(appConfig.apiPrefix + record.url)
         setIsModalVisible(true)
     }
 
@@ -131,7 +132,7 @@ const BannerList = () => {
             render: (url: string) => (
                 <div className="relative group rounded p-2 inline-block">
                     <Image 
-                        src={"https://api.shinyjewelry.shop" + url}
+                        src={appConfig.apiPrefix + url}
                         alt="Banner" 
                         height={160} 
                         style={{ objectFit: 'contain' }}
@@ -141,7 +142,7 @@ const BannerList = () => {
                     <div className="absolute inset-0 bg-gray-900/[.7] group-hover:flex hidden text-xl items-center justify-center">
                         <span
                             className="text-gray-100 hover:text-gray-300 cursor-pointer p-1.5"
-                            onClick={() => handleViewImage("https://api.shinyjewelry.shop" + url)}
+                            onClick={() => handleViewImage(appConfig.apiPrefix + url)}
                         >
                             <HiEye />
                         </span>
