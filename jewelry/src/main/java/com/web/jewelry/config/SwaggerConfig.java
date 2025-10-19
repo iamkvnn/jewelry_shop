@@ -14,9 +14,6 @@ public class SwaggerConfig {
                 .info(new Info()
                         .title("Jewelry Shop API")
                         .version("1.0.0")
-                        .description("API documentation for Jewelry Shop backend")
-                        .contact(new Contact()
-                                .name("Vũ Khoa")
-                                .email("support@shinyjewelry.shop")));
+                        .description("API documentation for Jewelry Shop backend"));
     }
 }
