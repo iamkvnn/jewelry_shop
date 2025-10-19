@@ -8,7 +8,7 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
-ENV VITE_API_URL=http://localhost:8080/api/v1
+ENV VITE_API_URL=https://api.shinyjewelry.shop/api/v1
 
 RUN npm run build
 

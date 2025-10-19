@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -52,7 +53,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.headers(headers -> {
             headers
-                .frameOptions(frameOptions -> frameOptions.deny())
+                .frameOptions(HeadersConfigurer.FrameOptionsConfig::deny)
                 .contentSecurityPolicy(csp -> csp
                     .policyDirectives(
                             "default-src 'self'; " +
@@ -82,7 +83,7 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of(feBaseUrlCus, feBaseUrlAdmin));
+        config.setAllowedOriginPatterns(List.of(feBaseUrlCus, feBaseUrlAdmin, "https://localhost:[5173, 5174]", "http://*.shinyjewelry.shop", "https://*.shinyjewelry.shop"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
