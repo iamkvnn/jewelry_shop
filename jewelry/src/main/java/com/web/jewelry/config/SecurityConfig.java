@@ -68,7 +68,7 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOriginPatterns(List.of(feBaseUrlCus, feBaseUrlAdmin, "https://localhost:[5173, 5174]", "http://*.shinyjewelry.shop", "https://*.shinyjewelry.shop"));
+        config.setAllowedOrigins(List.of(feBaseUrlCus, feBaseUrlAdmin, "https://shinyjewelry.shop", "https://admin.shinyjewelry.shop"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
