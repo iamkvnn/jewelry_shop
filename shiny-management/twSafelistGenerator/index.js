@@ -8,8 +8,8 @@ module.exports = plugin.withOptions(({ path = 'safelist.txt', patterns = [] }) =
     const safeList = generator(theme)(patterns).join('\n')
     const currentSafeList = fs.readFileSync(path).toString()
 
-    const hash = crypto.createHash('md5').update(JSON.stringify(safeList)).digest('hex')
-    const prevHash = crypto.createHash('md5').update(JSON.stringify(currentSafeList)).digest('hex')
+    const hash = crypto.createHash('sha256').update(JSON.stringify(safeList)).digest('hex')
+    const prevHash = crypto.createHash('sha256').update(JSON.stringify(currentSafeList)).digest('hex')
 
     if (hash !== prevHash) {
         return fs.writeFileSync(path, safeList)
