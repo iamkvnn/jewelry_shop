@@ -84,7 +84,7 @@ public class MomoPaymentService extends PaymentTemplate {
         if(Objects.equals(callbackData.get("resultCode"), "0") && momoConfig.isValidSignature(callbackData)){
             String orderId = callbackData.get("orderId");
             Order order = orderRepository.findById(orderId).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
-            if(order != null && order.getPaymentMethod().equals(EPaymentMethod.MOMO) && callbackData.get("amount") != null
+            if(order.getPaymentMethod().equals(EPaymentMethod.MOMO) && callbackData.get("amount") != null
                     && (order.getTotalPrice() <= Long.parseLong(callbackData.get("amount")))){
                 MomoPayment momoPayment = momoPaymentRepository.findByOrderId(orderId).orElseThrow(() -> new ResourceNotFoundException("Momo payment not found"));
                 momoPayment.setStatus(EPaymentStatus.PAID);

@@ -2,7 +2,7 @@
 import axios from "axios";
 import StorageKeys from "../constants/storage-key";
 
-const API_URL = import.meta.env.VITE_API_URL;
+export const API_URL = import.meta.env.VITE_API_URL;
 
 const axiosClient = axios.create({
   baseURL: API_URL || "http://localhost:8080/api/v1",

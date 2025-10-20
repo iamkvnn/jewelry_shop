@@ -8,12 +8,20 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import java.io.IOException;
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(value = AlreadyExistException.class)
     public ResponseEntity<ApiResponse> handleAlreadyExistException(AlreadyExistException ex) {
         ApiResponse apiResponse = new ApiResponse("409", ex.getMessage(), null);
         return ResponseEntity.ok(apiResponse);
+    }
+
+    @ExceptionHandler(value = IOException.class)
+    public ResponseEntity<ApiResponse> handleIOException(IOException ex) {
+        ApiResponse apiResponse = new ApiResponse("409", "Fail to load file", null);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(apiResponse);
     }
 
     @ExceptionHandler(value = ResourceNotFoundException.class)
