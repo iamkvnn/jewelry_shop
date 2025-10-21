@@ -210,10 +210,14 @@ public class UserService implements IUserService {
         if (customerRepository.existsByPhone(request.getPhone())) {
             throw new AlreadyExistException("Phone already exists");
         }
+        String password = request.getPassword();
+        if (password == null || !password.matches("(?=.*[0-9])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}")) {
+            throw new BadRequestException("Password must be at least 8 characters long and include at least one uppercase letter, one digit, and one special character");
+        }
         return customerRepository.save(Customer.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
+                .password(passwordEncoder.encode(password))
                 .phone(request.getPhone())
                 .fullName(request.getFullName())
                 .dob(request.getDob())

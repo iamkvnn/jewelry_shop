@@ -18,10 +18,16 @@ import com.web.jewelry.exception.BadRequestException;
 import com.web.jewelry.exception.ResourceNotFoundException;
 import com.web.jewelry.model.Customer;
 import com.web.jewelry.model.User;
+import com.web.jewelry.model.Manager;
+import com.web.jewelry.model.Staff;
 import com.web.jewelry.repository.CustomerRepository;
+import com.web.jewelry.repository.StaffRepository;
+import com.web.jewelry.repository.ManagerRepository;
 import com.web.jewelry.service.user.IUserService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.NonFinal;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -40,6 +46,8 @@ public class AuthenticationService {
     private final IUserService userService;
     private final PasswordEncoder passwordEncoder;
     private final CustomerRepository userRepository;
+    private final StaffRepository staffRepository;
+    private final ManagerRepository managerRepository;
 
     @NonFinal
     @Value("${jwt.signerKey}")
@@ -54,6 +62,7 @@ public class AuthenticationService {
     private String googleRedirectUri;
     @Value("${spring.security.oauth2.client.provider.google.user-info-uri}")
     private String googleUserInfoUri;
+
 
     public AuthenticationResponse authenticate (AuthenticationRequest request) {
         User user = switch (request.getRole().toString().toLowerCase()) {
@@ -70,14 +79,40 @@ public class AuthenticationService {
             throw new ResourceNotFoundException("User not found");
         }
         if(!request.isLoginWithGoogle() && !passwordEncoder.matches(request.getPassword(), user.getPassword())){
+            handleFailedLogin(user);
             throw new BadRequestException("Invalid username or password");
         }
+        resetFailedAttempts(user);
         String token = generateToken(user);
         UserResponse userResponse = userService.convertToUserResponse(user);
         return AuthenticationResponse.builder()
                 .user(userResponse)
                 .token(token)
                 .build();
+    }
+
+    private void resetFailedAttempts(User user) {
+        if (user.getFailedAttempts() > 0) {
+            user.setFailedAttempts(0L);
+            switch (user.getRole()) {
+                case CUSTOMER -> userRepository.save((Customer) user);
+                case STAFF -> staffRepository.save((Staff) user);
+                case MANAGER -> managerRepository.save((Manager) user);
+            }
+        }
+    }
+
+    private void handleFailedLogin(User user) {
+        long newAttempts = user.getFailedAttempts() + 1;
+        user.setFailedAttempts(newAttempts);
+        if (newAttempts >= 5) {
+            user.setStatus(EUserStatus.BANNED);
+        }
+        switch (user.getRole()) {
+            case CUSTOMER -> userRepository.save((Customer) user);
+            case STAFF -> staffRepository.save((Staff) user);
+            case MANAGER -> managerRepository.save((Manager) user);
+        }
     }
 
     private String generateToken(User user) {
