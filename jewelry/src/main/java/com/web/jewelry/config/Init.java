@@ -30,7 +30,7 @@ public class Init implements ApplicationListener<ApplicationReadyEvent> {
             managerRepository.save(Manager.builder()
                     .username("manager")
                     .email("23110119@student.hcmute.edu.vn")
-                    .password(passwordEncoder.encode("123456"))
+                    .password(passwordEncoder.encode("Aa123456789@"))
                     .fullName("Manager")
                     .role(EUserRole.MANAGER)
                     .status(EUserStatus.ACTIVE)
