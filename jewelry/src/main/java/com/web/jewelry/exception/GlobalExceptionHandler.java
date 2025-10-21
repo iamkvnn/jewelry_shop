@@ -1,6 +1,7 @@
 package com.web.jewelry.exception;
 
-import com.web.jewelry.dto.response.ApiResponse;
+import java.io.IOException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
@@ -8,7 +9,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import java.io.IOException;
+import com.web.jewelry.dto.response.ApiResponse;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -36,7 +37,7 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<ApiResponse> handleInternalServerError(Exception ex) {
-        ApiResponse apiResponse = new ApiResponse("500", "Internal Server Error ", ex.getMessage());
+        ApiResponse apiResponse = new ApiResponse("500", "Please try again later", null);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
     }
 
