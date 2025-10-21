@@ -87,6 +87,9 @@ public class UserService implements IUserService {
     public void changePassword(String oldPassword, String newPassword) {
         User user = getCurrentUser();
         if (passwordEncoder.matches(oldPassword, user.getPassword())) {
+            if (newPassword == null || !newPassword.matches("(?=.*[0-9])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}")) {
+                throw new BadRequestException("Password must be at least 8 characters long and include at least one uppercase letter, one digit, and one special character");
+            }
             user.setPassword(passwordEncoder.encode(newPassword));
             String token = UUID.randomUUID().toString();
             user.setBackupToken(token);
@@ -133,6 +136,9 @@ public class UserService implements IUserService {
     public void resetPassword(ResetPasswordRequest request) {
         if (request.getToken() == null && request.getCode() == null) {
             throw new BadRequestException("Verification code is required");
+        }
+        if (request.getNewPassword() == null || !request.getNewPassword().matches("(?=.*[0-9])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}")) {
+            throw new BadRequestException("Password must be at least 8 characters long and include at least one uppercase letter, one digit, and one special character");
         }
         User user;
         if (request.getToken() != null) {
@@ -186,6 +192,10 @@ public class UserService implements IUserService {
         }
         if (staffRepository.existsByPhone(request.getPhone())) {
             throw new AlreadyExistException("Phone already exists");
+        }
+        String password = request.getPassword();
+        if (password == null || !password.matches("(?=.*[0-9])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}")) {
+            throw new BadRequestException("Password must be at least 8 characters long and include at least one uppercase letter, one digit, and one special character");
         }
         return staffRepository.save(Staff.builder()
                 .username(request.getUsername())
