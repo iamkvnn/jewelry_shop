@@ -37,8 +37,8 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<ApiResponse> handleInternalServerError(Exception ex) {
-        ApiResponse apiResponse = new ApiResponse("500", "Please try again later", null);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+        ApiResponse apiResponse = new ApiResponse("1000", "Please try again later", null);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(apiResponse);
     }
 
     @ExceptionHandler(value = AuthorizationDeniedException.class)
