@@ -55,12 +55,12 @@ public class ProductController {
         return ResponseEntity.ok(new ApiResponse("200", "Success", responses));
     }
 
-    @GetMapping("/search-and-filter")
-    ResponseEntity<ApiResponse> getFilterAndSearchProducts(@RequestParam(required = false) String title, @RequestParam(required = false) List<Long> categories, @RequestParam(required = false) Long minPrice,
-                                                     @RequestParam(required = false) Long maxPrice, @RequestParam(required = false) List<String> productSizes,
-                                                     @RequestParam(required = false) String material, @RequestParam(defaultValue = "1") int page,
-                                                           @RequestParam(defaultValue = "30") int size){
-        Page<ProductResponse> products = productService.getSearchAndFilterProducts(title, categories, material, minPrice, maxPrice, productSizes, page, size);
-        return ResponseEntity.ok(new ApiResponse("200", "Success", products));
+        @GetMapping("/search-and-filter")
+        ResponseEntity<ApiResponse> getFilterAndSearchProducts(@RequestParam(required = false) String title, @RequestParam(required = false) List<Long> categories, @RequestParam(required = false) Long minPrice,
+                                                         @RequestParam(required = false) Long maxPrice, @RequestParam(required = false) List<String> productSizes,
+                                                         @RequestParam(required = false) String material, @RequestParam(defaultValue = "1") int page,
+                                                               @RequestParam(defaultValue = "30") int size){
+            Page<ProductResponse> products = productService.getSearchAndFilterProducts(title, categories, material, minPrice, maxPrice, productSizes, page, size);
+            return ResponseEntity.ok(new ApiResponse("200", "Success", products));
     }
 }

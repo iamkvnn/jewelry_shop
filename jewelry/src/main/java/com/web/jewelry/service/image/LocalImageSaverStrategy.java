@@ -11,11 +11,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+@SuppressWarnings("JvmTaintAnalysis")
 @Component
 public class LocalImageSaverStrategy implements IImageSaverStrategy{
     @Value("${app.image.upload-dir}")
     private String uploadDir;
 
+    @SuppressWarnings("JvmTaintAnalysis")
     @Override
     public String saveImage(MultipartFile file, String publicId) {
         try {

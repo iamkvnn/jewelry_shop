@@ -113,7 +113,7 @@ public class AuthenticationController {
     }
 
     @PutMapping("/confirm-delete-my-account")
-    public ResponseEntity<ApiResponse> confirmDeleteCurrentCustomer(@RequestParam String token) {
+    public ResponseEntity<ApiResponse> confirmDeleteCurrentCustomer(@RequestBody String token) {
         userService.confirmDeleteCurrentCustomer(token);
         return ResponseEntity.ok(new ApiResponse("200", "Success", null));
     }
