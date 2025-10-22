@@ -13,6 +13,7 @@ import com.web.jewelry.dto.request.IntrospectRequest;
 import com.web.jewelry.dto.response.AuthenticationResponse;
 import com.web.jewelry.dto.response.IntrospectResponse;
 import com.web.jewelry.dto.response.UserResponse;
+import com.web.jewelry.enums.EUserRole;
 import com.web.jewelry.enums.EUserStatus;
 import com.web.jewelry.exception.BadRequestException;
 import com.web.jewelry.exception.ResourceNotFoundException;
@@ -92,7 +93,7 @@ public class AuthenticationService {
     }
 
     private void resetFailedAttempts(User user) {
-        if (user.getFailedAttempts() > 0) {
+        if (user.getFailedAttempts() == null || user.getFailedAttempts() > 0) {
             user.setFailedAttempts(0L);
             switch (user.getRole()) {
                 case CUSTOMER -> userRepository.save((Customer) user);
@@ -103,9 +104,9 @@ public class AuthenticationService {
     }
 
     private void handleFailedLogin(User user) {
-        long newAttempts = user.getFailedAttempts() + 1;
+        long newAttempts = user.getFailedAttempts() == null ? 1 : user.getFailedAttempts() + 1;
         user.setFailedAttempts(newAttempts);
-        if (newAttempts >= 5) {
+        if (newAttempts >= 5 && user.getRole() != EUserRole.MANAGER) {
             user.setStatus(EUserStatus.BANNED);
         }
         switch (user.getRole()) {
