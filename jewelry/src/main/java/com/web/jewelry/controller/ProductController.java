@@ -4,8 +4,10 @@ import com.web.jewelry.dto.request.ProductRequest;
 import com.web.jewelry.dto.response.ApiResponse;
 import com.web.jewelry.dto.response.ProductResponse;
 import com.web.jewelry.model.Product;
-import com.web.jewelry.service.product.CacheProductService;
 import com.web.jewelry.service.product.IProductService;
+
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,12 +17,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("${api.prefix}/products")
+@RequiredArgsConstructor
 public class ProductController {
     private final IProductService productService;
-
-    public ProductController(CacheProductService productService) {
-        this.productService = productService;
-    }
 
     @PreAuthorize("hasRole('MANAGER')")
     @PostMapping("/add")
