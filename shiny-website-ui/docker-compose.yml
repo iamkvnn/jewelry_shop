@@ -1,0 +1,13 @@
+services:
+  fe-user:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: jewelry-user
+    ports:
+      - "5173:80"
+    networks:
+      - app-network
+networks:
+  app-network:
+    driver: bridge
