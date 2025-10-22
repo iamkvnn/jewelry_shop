@@ -48,13 +48,12 @@ services:
       context: ./shiny-management
       dockerfile: Dockerfile
     container_name: jewelry-management
-    depends_on:
-      - backend
+    # depends_on:
+    #   - backend
     ports:
       - "5174:80"
     networks:
       - app-network
-
   fe-user:
     build:
       context: ./shiny-website-ui
@@ -66,7 +65,6 @@ services:
       - "5173:80"
     networks:
       - app-network
-
 networks:
   app-network:
     driver: bridge
